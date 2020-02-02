@@ -43,4 +43,15 @@ defmodule TestForm.CreateArticleFormTest do
     assert CreateArticleForm.validate(params) ==
              {:error, %{author: %{first_name: ["can't be blank"]}}}
   end
+
+  test "returns multiple errors" do
+    params =
+      @valid_params_with_author
+      |> pop_in(["author", "first_name"])
+      |> elem(1)
+      |> Map.drop(["title"])
+
+    assert CreateArticleForm.validate(params) ==
+             {:error, %{author: %{first_name: ["can't be blank"]}, title: ["can't be blank"]}}
+  end
 end
