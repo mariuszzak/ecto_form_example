@@ -85,4 +85,35 @@ defmodule TestForm.CreateArticleFormTest do
                 author2: %{first_name: ["can't be blank"]}
               }}
   end
+
+  test "returns ok if provided valid remarks" do
+    params = Map.put(@valid_params, "remarks", "Foo bar remarks")
+
+    assert CreateArticleForm.validate(params) ==
+             {:ok,
+              %CreateArticleForm{
+                author: %Author{
+                  first_name: "Mariusz",
+                  last_name: "Zak"
+                },
+                author2: nil,
+                body: "Lorem ipsum dolor",
+                remarks: nil,
+                title: "Cool article"
+              }}
+  end
+
+  test "returns an error if provided remarks key but with nil value" do
+    params = Map.put(@valid_params, "remarks", nil)
+
+    assert CreateArticleForm.validate(params) ==
+             {:error, %{remarks: ["can't be nil if provided"]}}
+  end
+
+  test "returns an error if provided remarks key but with empty value" do
+    params = Map.put(@valid_params, "remarks", "")
+
+    assert CreateArticleForm.validate(params) ==
+             {:error, %{remarks: ["can't be empty string if provided"]}}
+  end
 end
