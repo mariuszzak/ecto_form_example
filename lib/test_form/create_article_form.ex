@@ -34,7 +34,7 @@ defmodule TestForm.CreateArticleForm do
 
   def changeset(schema, params) do
     schema
-    |> cast(params, @params_optional ++ @params_required)
+    |> cast(params, @params_optional ++ @params_required, empty_values: [])
     |> cast_embed(:author, required: true)
     |> cast_embed(:author2)
     |> validate_required(@params_required)
@@ -48,6 +48,9 @@ defmodule TestForm.CreateArticleForm do
 
       {:ok, ""} ->
         add_error(changeset, field, "can't be empty string if provided")
+
+      {:ok, _} ->
+        changeset
 
       :error ->
         changeset

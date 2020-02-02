@@ -98,7 +98,7 @@ defmodule TestForm.CreateArticleFormTest do
                 },
                 author2: nil,
                 body: "Lorem ipsum dolor",
-                remarks: nil,
+                remarks: "Foo bar remarks",
                 title: "Cool article"
               }}
   end
