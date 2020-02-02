@@ -7,6 +7,7 @@ defmodule TestForm.CreateArticleForm do
     field(:title, :string)
     field(:body, :string)
     embeds_one(:author, Author)
+    embeds_one(:author2, Author)
   end
 
   @params_required [:title]

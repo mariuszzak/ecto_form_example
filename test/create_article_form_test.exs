@@ -5,19 +5,26 @@ defmodule TestForm.CreateArticleFormTest do
 
   @valid_params %{
     "title" => "Cool article",
-    "body" => "Lorem ipsum dolor"
+    "body" => "Lorem ipsum dolor",
+    "author" => %{
+      "first_name" => "Mariusz",
+      "last_name" => "Zak"
+    }
   }
 
-  @valid_params_with_author Map.merge(@valid_params, %{
-                              "author" => %{
-                                "first_name" => "Mariusz",
-                                "last_name" => "Zak"
-                              }
-                            })
+  @valid_params_with_second_author Map.merge(@valid_params, %{
+                                     "first_name" => "Jan",
+                                     "last_name" => "Kowalski"
+                                   })
 
   test "returns a tuple with :ok and casted values" do
     assert CreateArticleForm.validate(@valid_params) ==
-             {:ok, %CreateArticleForm{title: "Cool article", body: "Lorem ipsum dolor"}}
+             {:ok,
+              %CreateArticleForm{
+                title: "Cool article",
+                body: "Lorem ipsum dolor",
+                author: %Author{first_name: "Mariusz", last_name: "Zak"}
+              }}
   end
 
   test "returns an error if title is not provided" do
@@ -27,13 +34,14 @@ defmodule TestForm.CreateArticleFormTest do
              {:error, %{title: ["can't be blank"]}}
   end
 
-  test "allows to provide an author" do
-    assert CreateArticleForm.validate(@valid_params_with_author) ==
+  test "allows to provide the second author" do
+    assert CreateArticleForm.validate(@valid_params_with_second_author) ==
              {:ok,
               %CreateArticleForm{
                 title: "Cool article",
                 body: "Lorem ipsum dolor",
-                author: %Author{first_name: "Mariusz", last_name: "Zak"}
+                author: %Author{first_name: "Mariusz", last_name: "Zak"},
+                author2: %Author{first_name: "Jan", last_name: "Kowalski"}
               }}
   end
 
