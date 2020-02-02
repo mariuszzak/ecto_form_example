@@ -13,8 +13,10 @@ defmodule TestForm.CreateArticleFormTest do
   }
 
   @valid_params_with_second_author Map.merge(@valid_params, %{
-                                     "first_name" => "Jan",
-                                     "last_name" => "Kowalski"
+                                     "author2" => %{
+                                       "first_name" => "Jan",
+                                       "last_name" => "Kowalski"
+                                     }
                                    })
 
   test "returns a tuple with :ok and casted values" do
@@ -34,6 +36,13 @@ defmodule TestForm.CreateArticleFormTest do
              {:error, %{title: ["can't be blank"]}}
   end
 
+  test "returns an error if author is not provided" do
+    params = Map.drop(@valid_params, ["author"])
+
+    assert CreateArticleForm.validate(params) ==
+             {:error, %{author: ["can't be blank"]}}
+  end
+
   test "allows to provide the second author" do
     assert CreateArticleForm.validate(@valid_params_with_second_author) ==
              {:ok,
@@ -46,20 +55,34 @@ defmodule TestForm.CreateArticleFormTest do
   end
 
   test "returns an error if provided author but without first_name" do
-    params = pop_in(@valid_params_with_author, ["author", "first_name"]) |> elem(1)
+    params = pop_in(@valid_params, ["author", "first_name"]) |> elem(1)
 
     assert CreateArticleForm.validate(params) ==
              {:error, %{author: %{first_name: ["can't be blank"]}}}
   end
 
+  test "returns an error if provided author2 but without first_name" do
+    params = pop_in(@valid_params_with_second_author, ["author2", "first_name"]) |> elem(1)
+
+    assert CreateArticleForm.validate(params) ==
+             {:error, %{author2: %{first_name: ["can't be blank"]}}}
+  end
+
   test "returns multiple errors" do
     params =
-      @valid_params_with_author
+      @valid_params_with_second_author
       |> pop_in(["author", "first_name"])
+      |> elem(1)
+      |> pop_in(["author2", "first_name"])
       |> elem(1)
       |> Map.drop(["title"])
 
     assert CreateArticleForm.validate(params) ==
-             {:error, %{author: %{first_name: ["can't be blank"]}, title: ["can't be blank"]}}
+             {:error,
+              %{
+                title: ["can't be blank"],
+                author: %{first_name: ["can't be blank"]},
+                author2: %{first_name: ["can't be blank"]}
+              }}
   end
 end

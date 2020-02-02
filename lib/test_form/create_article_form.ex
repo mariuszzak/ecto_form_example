@@ -34,7 +34,8 @@ defmodule TestForm.CreateArticleForm do
   def changeset(schema, params) do
     schema
     |> cast(params, @params_optional ++ @params_required)
-    |> cast_embed(:author)
+    |> cast_embed(:author, required: true)
+    |> cast_embed(:author2)
     |> validate_required(@params_required)
   end
 end
