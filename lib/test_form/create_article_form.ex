@@ -1,6 +1,7 @@
 defmodule TestForm.CreateArticleForm do
   use Ecto.Schema
   import Ecto.Changeset
+  alias TestForm.FormValidationError
   alias TestForm.CreateArticleForm.Author
 
   embedded_schema do
@@ -20,7 +21,7 @@ defmodule TestForm.CreateArticleForm do
         {:ok, apply_changes(changeset)}
 
       %{valid?: false} = changeset ->
-        {:error, render_errors(changeset)}
+        {:error, %FormValidationError{message: render_errors(changeset)}}
     end
   end
 

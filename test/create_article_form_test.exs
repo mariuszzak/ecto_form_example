@@ -2,6 +2,7 @@ defmodule TestForm.CreateArticleFormTest do
   use ExUnit.Case
   alias TestForm.CreateArticleForm
   alias TestForm.CreateArticleForm.Author
+  alias TestForm.FormValidationError
 
   @valid_params %{
     "title" => "Cool article",
@@ -33,14 +34,14 @@ defmodule TestForm.CreateArticleFormTest do
     params = Map.drop(@valid_params, ["title"])
 
     assert CreateArticleForm.validate(params) ==
-             {:error, %{title: ["can't be blank"]}}
+             {:error, %FormValidationError{message: %{title: ["can't be blank"]}}}
   end
 
   test "returns an error if author is not provided" do
     params = Map.drop(@valid_params, ["author"])
 
     assert CreateArticleForm.validate(params) ==
-             {:error, %{author: ["can't be blank"]}}
+             {:error, %FormValidationError{message: %{author: ["can't be blank"]}}}
   end
 
   test "allows to provide the second author" do
@@ -58,14 +59,15 @@ defmodule TestForm.CreateArticleFormTest do
     params = pop_in(@valid_params, ["author", "first_name"]) |> elem(1)
 
     assert CreateArticleForm.validate(params) ==
-             {:error, %{author: %{first_name: ["can't be blank"]}}}
+             {:error, %FormValidationError{message: %{author: %{first_name: ["can't be blank"]}}}}
   end
 
   test "returns an error if provided author2 but without first_name" do
     params = pop_in(@valid_params_with_second_author, ["author2", "first_name"]) |> elem(1)
 
     assert CreateArticleForm.validate(params) ==
-             {:error, %{author2: %{first_name: ["can't be blank"]}}}
+             {:error,
+              %FormValidationError{message: %{author2: %{first_name: ["can't be blank"]}}}}
   end
 
   test "returns multiple errors" do
@@ -79,10 +81,12 @@ defmodule TestForm.CreateArticleFormTest do
 
     assert CreateArticleForm.validate(params) ==
              {:error,
-              %{
-                title: ["can't be blank"],
-                author: %{first_name: ["can't be blank"]},
-                author2: %{first_name: ["can't be blank"]}
+              %FormValidationError{
+                message: %{
+                  title: ["can't be blank"],
+                  author: %{first_name: ["can't be blank"]},
+                  author2: %{first_name: ["can't be blank"]}
+                }
               }}
   end
 
@@ -107,13 +111,14 @@ defmodule TestForm.CreateArticleFormTest do
     params = Map.put(@valid_params, "remarks", nil)
 
     assert CreateArticleForm.validate(params) ==
-             {:error, %{remarks: ["can't be nil if provided"]}}
+             {:error, %FormValidationError{message: %{remarks: ["can't be nil if provided"]}}}
   end
 
   test "returns an error if provided remarks key but with empty value" do
     params = Map.put(@valid_params, "remarks", "")
 
     assert CreateArticleForm.validate(params) ==
-             {:error, %{remarks: ["can't be empty string if provided"]}}
+             {:error,
+              %FormValidationError{message: %{remarks: ["can't be empty string if provided"]}}}
   end
 end
