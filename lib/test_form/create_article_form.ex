@@ -15,6 +15,7 @@ defmodule TestForm.CreateArticleForm do
   @params_required [:title]
   @params_optional [:body, :remarks]
 
+  @spec validate(map()) :: {:ok, %__MODULE__{}} | {:error, %FormValidationError{}}
   def validate(params) do
     case changeset(%__MODULE__{}, params) do
       %{valid?: true} = changeset ->
@@ -31,6 +32,7 @@ defmodule TestForm.CreateArticleForm do
     end)
   end
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(schema, params) do
     schema
     |> cast(params, @params_optional ++ @params_required, empty_values: [])

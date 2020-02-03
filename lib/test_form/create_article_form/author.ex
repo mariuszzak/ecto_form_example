@@ -10,6 +10,7 @@ defmodule TestForm.CreateArticleForm.Author do
   @params_required [:first_name]
   @params_optional [:last_name]
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(schema, params) do
     schema
     |> cast(params, @params_optional ++ @params_required)
